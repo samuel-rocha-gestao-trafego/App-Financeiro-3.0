@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="bg-slate-50 dark:bg-slate-900 min-h-screen">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}FinanControl - Gestão Financeira{% endblock %}</title>
+
+    <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/heroicons:wallet-solid.svg?color=%234f46e5">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-900 antialiased pb-28 md:pb-8">
+
+    <!-- HEADER / NAVBAR TOP -->
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <a href="{{ url_for('main.dashboard') }}" class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+                        <i class="fas fa-wallet text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400">FinanControl</span>
+                </a>
+
+                {% if current_user.is_authenticated %}
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <a href="{{ url_for('main.dashboard') }}" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-chart-pie text-indigo-500"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{{ url_for('cards.dashboard_cartao') }}" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-credit-card text-indigo-500"></i>
+                        <span>Cartões</span>
+                    </a>
+                    <a href="{{ url_for('reports.recorrentes') }}" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-sync text-indigo-500"></i>
+                        <span>Fixas</span>
+                    </a>
+                    <a href="{{ url_for('transactions.novo_lancamento') }}" class="px-3 py-2 rounded-xl text-sm font-medium bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Novo Lançamento</span>
+                    </a>
+                    <a href="{{ url_for('transactions.historico') }}" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-list text-indigo-500"></i>
+                        <span>Histórico</span>
+                    </a>
+                    <a href="{{ url_for('accounts.configuracoes') }}" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-cog text-indigo-500"></i>
+                        <span>Ajustes</span>
+                    </a>
+                    <!-- Botão Dark/Light Mode -->
+                    <button onclick="toggleDark()" class="px-3 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center space-x-2">
+                        <i class="fas fa-moon dark:hidden text-slate-500"></i>
+                        <i class="fas fa-sun hidden dark:inline text-amber-400"></i>
+                    </button>
+                </nav>
+
+                <div class="hidden md:flex items-center space-x-3">
+                    <a href="{{ url_for('auth.logout') }}" class="p-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors" title="Sair">
+                        <i class="fas fa-sign-out-alt text-lg"></i>
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if current_user.is_authenticated %}
+                <div class="md:hidden flex items-center space-x-2">
+                    <a href="{{ url_for('accounts.configuracoes') }}" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-sm font-medium">
+                        <i class="fas fa-cog text-lg"></i>
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg text-sm font-medium flex items-center space-x-1">
+                        <i class="fas fa-sign-out-alt text-lg"></i>
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 mb-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- BARRA INFERIOR FIXA (MOBILE ONLY) -->
+    {% if current_user.is_authenticated %}
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700/80 shadow-lg">
+        <div class="grid grid-cols-5 h-16 max-w-md mx-auto items-center">
+            
+            <a href="{{ url_for('main.dashboard') }}" class="inline-flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i class="fas fa-chart-pie text-base mb-0.5"></i>
+                <span class="text-[10px] font-medium">Início</span>
+            </a>
+
+            <a href="{{ url_for('reports.recorrentes') }}" class="inline-flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i class="fas fa-sync text-base mb-0.5"></i>
+                <span class="text-[10px] font-medium">Fixas</span>
+            </a>
+
+            <a href="{{ url_for('transactions.novo_lancamento') }}" class="inline-flex flex-col items-center justify-center relative">
+                <div class="w-11 h-11 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/40 -mt-5 border-4 border-slate-50 dark:border-slate-900 active:scale-95 transition-transform">
+                    <i class="fas fa-plus text-base"></i>
+                </div>
+                <span class="text-[10px] font-medium text-indigo-600 dark:text-indigo-400 mt-0.5">Lançar</span>
+            </a>
+
+            <a href="{{ url_for('cards.dashboard_cartao') }}" class="inline-flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i class="fas fa-credit-card text-base mb-0.5"></i>
+                <span class="text-[10px] font-medium">Cartões</span>
+            </a>
+
+            <a href="{{ url_for('transactions.historico') }}" class="inline-flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                <i class="fas fa-list-ul text-base mb-0.5"></i>
+                <span class="text-[10px] font-medium">Extrato</span>
+            </a>
+
+        </div>
+    </nav>
+    {% endif %}
+
+    <script>
+        // Toggle Dark/Light Mode
+        function toggleDark() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        // Aplica tema salvo
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
